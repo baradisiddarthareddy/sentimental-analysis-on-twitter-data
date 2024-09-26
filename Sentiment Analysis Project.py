@@ -1,10 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
 
-# In[2]:
-
-
-# utilities
 import re
 import numpy as np
 import pandas as pd
@@ -23,7 +17,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import confusion_matrix, classification_report
 
 
-# In[4]:
+
 
 
 # Importing the dataset
@@ -33,68 +27,68 @@ df = pd.read_csv('C:/Talent Battle/4 Weeks ML Project Challenge/Dataset/training
 df.sample(5)
 
 
-# In[6]:
+
 
 
 df.head()
 
 
-# In[8]:
+
 
 
 df.columns
 
 
-# In[10]:
+
 
 
 print('length of data is', len(df))
 
 
-# In[12]:
+
 
 
 df. shape
 
 
-# In[14]:
+
 
 
 df.info()
 
 
-# In[16]:
+
 
 
 df.dtypes
 
 
-# In[18]:
+
 
 
 np.sum(df.isnull().any(axis=1))
 
 
-# In[20]:
+
 
 
 print('Count of columns in the data is:  ', len(df.columns))
 print('Count of rows in the data is:  ', len(df))
 
 
-# In[22]:
+
 
 
 df['target'].unique()
 
 
-# In[24]:
+
 
 
 df['target'].nunique()
 
 
-# In[26]:
+
 
 
 # Plotting the distribution for dataset.
@@ -104,53 +98,53 @@ ax.set_xticklabels(['Negative','Positive'], rotation=0)
 text, sentiment = list(df['text']), list(df['target'])
 
 
-# In[28]:
+
 
 
 import seaborn as sns
 sns.countplot(x='target', data=df)
 
 
-# In[30]:
+
 
 
 data=df[['text','target']]
 
 
-# In[34]:
+
 
 
 data['target'].unique()
 
 
-# In[36]:
+
 
 
 data_pos = data[data['target'] == 1]
 data_neg = data[data['target'] == 0]
 
 
-# In[38]:
+
 
 
 data_pos = data_pos.iloc[:int(20000)]
 data_neg = data_neg.iloc[:int(20000)]
 
 
-# In[40]:
+
 
 
 dataset = pd.concat([data_pos, data_neg])
 
 
-# In[42]:
+
 
 
 dataset['text']=dataset['text'].str.lower()
 dataset['text'].tail()
 
 
-# In[44]:
+
 
 
 stopwordlist = ['a', 'about', 'above', 'after', 'again', 'ain', 'all', 'am', 'an',
@@ -170,7 +164,7 @@ stopwordlist = ['a', 'about', 'above', 'after', 'again', 'ain', 'all', 'am', 'an
              "youve", 'your', 'yours', 'yourself', 'yourselves']
 
 
-# In[46]:
+
 
 
 STOPWORDS = set(stopwordlist)
@@ -180,7 +174,7 @@ dataset['text'] = dataset['text'].apply(lambda text: cleaning_stopwords(text))
 dataset['text'].head()
 
 
-# In[48]:
+
 
 
 import string
@@ -204,14 +198,13 @@ dataset['text'].tail()
 
 # In[53]:
 
-
 def cleaning_URLs(data):
     return re.sub('((www.[^s]+)|(https?://[^s]+))',' ',data)
 dataset['text'] = dataset['text'].apply(lambda x: cleaning_URLs(x))
 dataset['text'].tail()
 
 
-# In[55]:
+
 
 
 def cleaning_numbers(data):
@@ -220,7 +213,7 @@ dataset['text'] = dataset['text'].apply(lambda x: cleaning_numbers(x))
 dataset['text'].tail()
 
 
-# In[57]:
+
 
 
 from nltk.tokenize import RegexpTokenizer
@@ -229,7 +222,7 @@ dataset['text'] = dataset['text'].apply(tokenizer.tokenize)
 dataset['text'].head()
 
 
-# In[59]:
+
 
 
 import nltk
@@ -241,7 +234,7 @@ dataset['text']= dataset['text'].apply(lambda x: stemming_on_text(x))
 dataset['text'].head()
 
 
-# In[63]:
+
 
 
 lm = nltk.WordNetLemmatizer()
@@ -252,14 +245,13 @@ dataset['text'] = dataset['text'].apply(lambda x: lemmatizer_on_text(x))
 dataset['text'].head()
 
 
-# In[68]:
 
 
 X=data.text
 y=data.target
 
 
-# In[70]:
+
 
 
 data_neg = data['text'][:800000]
@@ -269,7 +261,7 @@ wc = WordCloud(max_words = 1000 , width = 1600 , height = 800,
 plt.imshow(wc)
 
 
-# In[72]:
+
 
 
 data_pos = data['text'][800000:]
@@ -279,13 +271,13 @@ plt.figure(figsize = (20,20))
 plt.imshow(wc)
 
 
-# In[74]:
+
 
 
 X_train, X_test, y_train, y_test = train_test_split(X,y,test_size = 0.05, random_state =26105111)
 
 
-# In[76]:
+
 
 
 vectoriser = TfidfVectorizer(ngram_range=(1,2), max_features=500000)
@@ -293,15 +285,15 @@ vectoriser.fit(X_train)
 print('No. of feature_words: ', len(vectoriser.get_feature_names()))
 
 
-# In[81]:
+
 
 
 def model_Evaluate(model):
-# Predict values for Test dataset
+
     y_pred = model.predict(X_test)
-# Print the evaluation metrics for the dataset.
+
     print(classification_report(y_test, y_pred))
-# Compute and plot the Confusion matrix
+
     cf_matrix = confusion_matrix(y_test, y_pred)
     categories = ['Negative','Positive']
     group_names = ['True Neg','False Pos', 'False Neg','True Pos']
@@ -315,7 +307,7 @@ lemmatizer_on_text   labels = np.asarray(labels).reshape(2,2)
     plt.title ("Confusion Matrix", fontdict = {'size':18}, pad = 20)
 
 
-# In[83]:
+
 
 
 BNBmodel = BernoulliNB()
@@ -324,7 +316,7 @@ model_Evaluate(BNBmodel)
 y_pred1 = BNBmodel.predict(X_test)
 
 
-# In[85]:
+
 
 
 from sklearn.metrics import roc_curve, auc
@@ -341,7 +333,7 @@ plt.legend(loc="lower right")
 plt.show()
 
 
-# In[87]:
+
 
 
 SVCmodel = LinearSVC()
@@ -350,7 +342,7 @@ model_Evaluate(SVCmodel)
 y_pred2 = SVCmodel.predict(X_test)
 
 
-# In[89]:
+
 
 
 from sklearn.metrics import roc_curve, auc
@@ -367,7 +359,7 @@ plt.legend(loc="lower right")
 plt.show()
 
 
-# In[95]:
+
 
 
 LRmodel = LogisticRegression(C = 2, max_iter = 1000, n_jobs=-1)
@@ -376,7 +368,7 @@ model_Evaluate(LRmodel)
 y_pred3 = LRmodel.predict(X_test)
 
 
-# In[94]:
+
 
 
 from sklearn.metrics import roc_curve, auc
